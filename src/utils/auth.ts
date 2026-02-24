@@ -107,14 +107,23 @@ export async function verifyMoltbookApiKey(apiKey: string): Promise<AuthResult> 
       };
     }
 
-    const moltbookAgent = await response.json() as { id: string; name: string; stats?: { posts: number; followers: number; karma: number } };
+    const responseData = await response.json() as { success: boolean; agent: { id: string; name: string; display_name?: string; stats?: { posts: number; followers: number; karma: number } } };
+    
+    if (!responseData.success || !responseData.agent) {
+      return {
+        success: false,
+        error: 'Invalid response from Moltbook API',
+      };
+    }
+    
+    const moltbookAgent = responseData.agent;
     
     // Import database to create/get agent with internal UUID
     const { getOrCreateAgent } = await import('../database.js');
     
     // Create or get the agent using Moltbook's ID as the moltbook_id
     // This will generate an internal UUID for our system
-    const agentRecord = getOrCreateAgent(moltbookAgent.id, moltbookAgent.name);
+    const agentRecord = getOrCreateAgent(moltbookAgent.id, moltbookAgent.display_name || moltbookAgent.name);
     
     // Update the stats if available
     if (moltbookAgent.stats) {
