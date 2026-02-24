@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS agents (
 CREATE TABLE IF NOT EXISTS card_templates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     agent_name TEXT NOT NULL CHECK(length(agent_name) <= 30),
+    rarity TEXT DEFAULT 'common' CHECK(rarity IN ('common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic')),
     class TEXT CHECK(length(class) <= 30),
     element TEXT,
     str INTEGER DEFAULT 50,

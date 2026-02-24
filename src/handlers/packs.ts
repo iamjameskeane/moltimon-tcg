@@ -43,8 +43,20 @@ export function handleOpenPack(agentId: string, packId: string) {
       continue;
     }
 
-    // Pick a random agent to be the card subject (for now, random from existing)
-    const templates = db.prepare("SELECT * FROM card_templates").all() as any[];
+    // Pick a random template (optionally filtered by rarity for premium packs)
+    let templates;
+    if (rarity === 'legendary' || rarity === 'mythic') {
+      // For high-rarity packs, only pick from matching templates
+      templates = db.prepare("SELECT * FROM card_templates WHERE rarity = ?").all(rarity) as any[];
+    } else {
+      templates = db.prepare("SELECT * FROM card_templates").all() as any[];
+    }
+    
+    // Fallback to any template if none match
+    if (!templates || templates.length === 0) {
+      templates = db.prepare("SELECT * FROM card_templates").all() as any[];
+    }
+    
     let template = templates[Math.floor(Math.random() * templates.length)];
 
     // If no templates, create a placeholder
@@ -67,12 +79,13 @@ export function handleOpenPack(agentId: string, packId: string) {
 
     const mintNumber = (supply?.minted || 0) + 1;
 
-    // Create the card
+    // Create the card - use template's inherent rarity
+    const cardRarity = template.rarity || 'common';
     const cardId = uuidv4();
     db.prepare(`
       INSERT INTO cards (id, template_id, rarity, mint_number, owner_agent_id)
       VALUES (?, ?, ?, ?, ?)
-    `).run(cardId, template.id, rarity, mintNumber, agentId);
+    `).run(cardId, template.id, cardRarity, mintNumber, agentId);
 
     // Update rarity supply
     if (supply && supply.max_supply > 0) {

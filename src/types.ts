@@ -81,6 +81,7 @@ export interface Battle {
 export interface CardTemplate {
   id: number;
   agent_name: string;
+  rarity: string;          // common|uncommon|rare|epic|legendary|mythic
   class: string;
   element: string;
   str: number;

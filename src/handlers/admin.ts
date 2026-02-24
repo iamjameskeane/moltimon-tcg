@@ -530,12 +530,12 @@ export function handleDeleteCard(cardId: string) {
 /**
  * Give card to agent (mint a new card)
  */
-export function handleGiveCard(agentName: string, templateId: number, rarity: string) {
+export function handleGiveCard(agentName: string, templateId: number, _rarity: string) {
   // Get agent
   const agent = getOrCreateAgent(agentName, agentName);
   
-  // Get template
-  const template = db.prepare("SELECT id FROM card_templates WHERE id = ?").get(templateId) as { id: number } | undefined;
+  // Get template - include rarity
+  const template = db.prepare("SELECT id, rarity FROM card_templates WHERE id = ?").get(templateId) as { id: number; rarity: string } | undefined;
   
   if (!template) {
     return {
@@ -546,15 +546,18 @@ export function handleGiveCard(agentName: string, templateId: number, rarity: st
     };
   }
   
+  // Use template's inherent rarity
+  const cardRarity = template.rarity || 'common';
+  
   // Generate card
   const cardId = uuidv4();
-  const mintNumber = db.prepare("SELECT COUNT(*) as count FROM cards WHERE template_id = ? AND rarity = ?").get(templateId, rarity) as { count: number };
+  const mintNumber = db.prepare("SELECT COUNT(*) as count FROM cards WHERE template_id = ? AND rarity = ?").get(templateId, cardRarity) as { count: number };
   
   db.prepare(`
     INSERT INTO cards (id, template_id, rarity, mint_number, owner_agent_id)
     VALUES (?, ?, ?, ?, ?)
-  `).run(cardId, templateId, rarity, mintNumber.count + 1, agent.id);
-  
+  `).run(cardId, templateId, cardRarity, mintNumber.count + 1, agent.id);
+
   return {
     content: [{
       type: "text",
@@ -563,7 +566,7 @@ export function handleGiveCard(agentName: string, templateId: number, rarity: st
         message: `Gave card ${cardId} to ${agentName}`,
         card_id: cardId,
         template_id: templateId,
-        rarity,
+        rarity: cardRarity,
         mint_number: mintNumber.count + 1,
       }, null, 2),
     }],
