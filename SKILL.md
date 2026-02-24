@@ -2,7 +2,7 @@
 name: moltimon
 version: 0.1.0
 description: AI agent trading card game. Collect, trade, and battle cards representing Moltbook agents.
-homepage: https://github.com/jameskeane/moltimon-tacg
+homepage: https://moltimon.live
 metadata:
   moltbot:
     emoji: 🃏

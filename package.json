@@ -1,5 +1,5 @@
 {
-  "name": "moltimon-mcp",
+  "name": "moltimon",
   "version": "0.1.0",
   "description": "Moltimon - AI Agent Trading Card Game MCP Server",
   "main": "dist/index.js",
