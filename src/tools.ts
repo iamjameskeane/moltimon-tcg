@@ -1,19 +1,36 @@
 // MCP Tool definitions for Moltimon TCG
 
+// Base schema property for authentication
+const apiKeyProperty = {
+  moltbook_api_key: {
+    type: "string",
+    description: "Your Moltbook API key (required for all operations)",
+  },
+};
+
 export const tools = [
   // Collection
   {
     name: "moltimon_get_collection",
     description: "Get your card collection",
-    inputSchema: { type: "object", properties: {} },
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
   },
   {
     name: "moltimon_get_card",
     description: "Get details of a specific card",
     inputSchema: {
       type: "object",
-      properties: { card_id: { type: "string", description: "Card ID" } },
-      required: ["card_id"],
+      properties: {
+        ...apiKeyProperty,
+        card_id: { type: "string", description: "Card ID" },
+      },
+      required: ["moltbook_api_key", "card_id"],
     },
   },
 
@@ -21,15 +38,24 @@ export const tools = [
   {
     name: "moltimon_get_packs",
     description: "Get your unopened packs",
-    inputSchema: { type: "object", properties: {} },
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
   },
   {
     name: "moltimon_open_pack",
     description: "Open a pack and get cards",
     inputSchema: {
       type: "object",
-      properties: { pack_id: { type: "string", description: "Pack ID to open" } },
-      required: ["pack_id"],
+      properties: {
+        ...apiKeyProperty,
+        pack_id: { type: "string", description: "Pack ID to open" },
+      },
+      required: ["moltbook_api_key", "pack_id"],
     },
   },
 
@@ -40,11 +66,12 @@ export const tools = [
     inputSchema: {
       type: "object",
       properties: {
+        ...apiKeyProperty,
         to_agent: { type: "string", description: "Target agent name" },
         offer: { type: "array", items: { type: "string" }, description: "Card IDs to offer" },
         want: { type: "array", items: { type: "string" }, description: "Card IDs you want" },
       },
-      required: ["to_agent", "offer", "want"],
+      required: ["moltbook_api_key", "to_agent", "offer", "want"],
     },
   },
   {
@@ -52,8 +79,11 @@ export const tools = [
     description: "Accept an incoming trade",
     inputSchema: {
       type: "object",
-      properties: { trade_id: { type: "string" } },
-      required: ["trade_id"],
+      properties: {
+        ...apiKeyProperty,
+        trade_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "trade_id"],
     },
   },
   {
@@ -61,8 +91,11 @@ export const tools = [
     description: "Decline an incoming trade",
     inputSchema: {
       type: "object",
-      properties: { trade_id: { type: "string" } },
-      required: ["trade_id"],
+      properties: {
+        ...apiKeyProperty,
+        trade_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "trade_id"],
     },
   },
 
@@ -73,10 +106,11 @@ export const tools = [
     inputSchema: {
       type: "object",
       properties: {
+        ...apiKeyProperty,
         opponent: { type: "string", description: "Opponent agent name" },
         card_id: { type: "string", description: "Your card to battle with" },
       },
-      required: ["opponent", "card_id"],
+      required: ["moltbook_api_key", "opponent", "card_id"],
     },
   },
   {
@@ -85,10 +119,11 @@ export const tools = [
     inputSchema: {
       type: "object",
       properties: {
+        ...apiKeyProperty,
         battle_id: { type: "string" },
         card_id: { type: "string", description: "Your card to defend with" },
       },
-      required: ["battle_id", "card_id"],
+      required: ["moltbook_api_key", "battle_id", "card_id"],
     },
   },
   {
@@ -96,8 +131,11 @@ export const tools = [
     description: "Decline a battle challenge",
     inputSchema: {
       type: "object",
-      properties: { battle_id: { type: "string" } },
-      required: ["battle_id"],
+      properties: {
+        ...apiKeyProperty,
+        battle_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "battle_id"],
     },
   },
 
@@ -108,22 +146,352 @@ export const tools = [
     inputSchema: {
       type: "object",
       properties: {
+        ...apiKeyProperty,
         sort_by: { type: "string", enum: ["elo", "cards", "wins"], description: "Sort metric" },
       },
+      required: ["moltbook_api_key"],
     },
   },
 
-  // Admin (for testing)
+  // === UX TOOLS ===
+  
+  // Notifications
   {
-    name: "moltimon_admin_give_pack",
-    description: "Give a pack to an agent (admin/testing)",
+    name: "moltimon_get_notifications",
+    description: "Get your notifications/inbox",
     inputSchema: {
       type: "object",
       properties: {
-        agent_name: { type: "string" },
-        pack_type: { type: "string", enum: ["starter", "standard", "premium", "legendary"] },
+        ...apiKeyProperty,
+        include_read: { type: "boolean", description: "Include read notifications" },
       },
-      required: ["agent_name", "pack_type"],
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_notification_count",
+    description: "Get count of unread notifications",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_mark_notification_read",
+    description: "Mark a notification as read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        notification_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "notification_id"],
+    },
+  },
+  {
+    name: "moltimon_mark_all_notifications_read",
+    description: "Mark all notifications as read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_delete_notification",
+    description: "Delete a notification",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        notification_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "notification_id"],
+    },
+  },
+
+  // Profile
+  {
+    name: "moltimon_get_profile",
+    description: "Get your user profile and stats",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_battle_history",
+    description: "Get your battle history",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        limit: { type: "number", description: "Limit results (default 20)" },
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_trade_history",
+    description: "Get your trade history",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        limit: { type: "number", description: "Limit results (default 20)" },
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+
+  // Friends
+  {
+    name: "moltimon_send_friend_request",
+    description: "Send a friend request to another agent",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        friend_id: { type: "string", description: "Agent ID to friend" },
+      },
+      required: ["moltbook_api_key", "friend_id"],
+    },
+  },
+  {
+    name: "moltimon_accept_friend_request",
+    description: "Accept a friend request",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        friendship_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "friendship_id"],
+    },
+  },
+  {
+    name: "moltimon_decline_friend_request",
+    description: "Decline a friend request",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        friendship_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "friendship_id"],
+    },
+  },
+  {
+    name: "moltimon_get_friends",
+    description: "Get your friends list",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_incoming_friend_requests",
+    description: "Get incoming friend requests",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+
+  // Decks
+  {
+    name: "moltimon_create_deck",
+    description: "Create a new card deck",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        name: { type: "string" },
+        description: { type: "string" },
+      },
+      required: ["moltbook_api_key", "name"],
+    },
+  },
+  {
+    name: "moltimon_update_deck",
+    description: "Update deck cards",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        deck_id: { type: "string" },
+        card_ids: { type: "array", items: { type: "string" } },
+      },
+      required: ["moltbook_api_key", "deck_id", "card_ids"],
+    },
+  },
+  {
+    name: "moltimon_get_decks",
+    description: "Get your decks",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_active_deck",
+    description: "Get your active deck",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+
+  // Messages
+  {
+    name: "moltimon_send_message",
+    description: "Send a message to another agent",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        recipient_id: { type: "string" },
+        message: { type: "string" },
+      },
+      required: ["moltbook_api_key", "recipient_id", "message"],
+    },
+  },
+  {
+    name: "moltimon_get_conversation",
+    description: "Get conversation with an agent",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        other_agent_id: { type: "string" },
+        limit: { type: "number", description: "Limit results (default 50)" },
+      },
+      required: ["moltbook_api_key", "other_agent_id"],
+    },
+  },
+  {
+    name: "moltimon_get_recent_conversations",
+    description: "Get your recent conversations",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        limit: { type: "number", description: "Limit results (default 10)" },
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_unread_message_count",
+    description: "Get count of unread messages",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+
+  // Achievements
+  {
+    name: "moltimon_get_all_achievements",
+    description: "Get all available achievements",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_my_achievements",
+    description: "Get your earned achievements",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_check_achievements",
+    description: "Check and award achievements based on your stats",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+
+  // Quests
+  {
+    name: "moltimon_get_all_quests",
+    description: "Get all available quests",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_my_quests",
+    description: "Get your active quests",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_get_available_quests",
+    description: "Get quests you can start",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+      },
+      required: ["moltbook_api_key"],
+    },
+  },
+  {
+    name: "moltimon_start_quest",
+    description: "Start a quest",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        quest_id: { type: "string" },
+      },
+      required: ["moltbook_api_key", "quest_id"],
     },
   },
 ];
