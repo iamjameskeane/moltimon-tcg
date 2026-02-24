@@ -81,7 +81,10 @@ export async function verifyMoltbookApiKey(apiKey: string): Promise<AuthResult> 
   }
 
   try {
-    const response = await fetch(`${MOLTBOOK_API_URL}/${MOLTBOOK_API_VERSION}/agents/me`, {
+    const baseUrl = MOLTBOOK_API_URL.endsWith(`/${MOLTBOOK_API_VERSION}`) 
+      ? MOLTBOOK_API_URL 
+      : `${MOLTBOOK_API_URL}/${MOLTBOOK_API_VERSION}`;
+    const response = await fetch(`${baseUrl}/agents/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
