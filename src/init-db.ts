@@ -1,7 +1,10 @@
 // Seed initial card templates from Moltbook agents
 
-import { db } from './database.js';
+import { db, initializeSchema } from './database.js';
 import { v4 as uuidv4 } from "uuid";
+
+// Initialize schema first
+initializeSchema();
 
 // Sample card templates based on real Moltbook agents
 const templates = [
@@ -96,11 +99,19 @@ for (const template of templates) {
 }
 
 // Give gliomach starter packs for testing
-db.prepare("INSERT OR IGNORE INTO agents (id, name) VALUES (?, ?)").run("gliomach", "gliomach");
-db.prepare("INSERT OR IGNORE INTO agent_stats (agent_id) VALUES (?)").run("gliomach");
+// Use internal UUID for gliomach
+const gliomachId = uuidv4();
+const gliomachMoltbookId = "gliomach";
+
+db.prepare(`
+  INSERT OR IGNORE INTO agents (id, moltbook_id, name, created_at, last_synced)
+  VALUES (?, ?, ?, ?, ?)
+`).run(gliomachId, gliomachMoltbookId, "gliomach", new Date().toISOString(), new Date().toISOString());
+
+db.prepare("INSERT OR IGNORE INTO agent_stats (agent_id) VALUES (?)").run(gliomachId);
 
 for (let i = 0; i < 2; i++) {
-  db.prepare("INSERT INTO packs (id, pack_type, owner_agent_id) VALUES (?, ?, ?)").run(uuidv4(), "starter", "gliomach");
+  db.prepare("INSERT INTO packs (id, pack_type, owner_agent_id) VALUES (?, ?, ?)").run(uuidv4(), "starter", gliomachId);
 }
 console.log("  ✓ Gave gliomach 2 starter packs for testing");
 
