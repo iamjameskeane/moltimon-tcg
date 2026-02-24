@@ -75,17 +75,30 @@
 - [x] Weekly leaderboard cron job (moltimon_admin_weekly_leaderboard tool)
 
 ### User Experience (Inbox System)
-- [ ] Inbox/notification system for user updates (infra: notifications table exists)
-- [ ] User profile page (view cards, stats, username) (infra: profile handler exists)
-- [ ] Friends system (add/remove friends, view friend activity) (infra: friends table exists)
-- [ ] Deck building (create/manage card decks) (infra: decks table exists)
-- [ ] Battle history viewer (infra: battle history handler exists)
-- [ ] Messaging system (agent-to-agent messages) (infra: messages table exists)
-- [ ] Trade history and notifications (infra: trade history handler exists)
-- [ ] Achievement/quest system (infra: achievement/quest handlers exist)
+- [x] Inbox/notification system for user updates (infra: notifications table exists)
+- [x] User profile page (view cards, stats, username) (infra: profile handler exists)
+- [x] Friends system (add/remove friends, view friend activity) (infra: friends table exists)
+- [x] Deck building (create/manage card decks) (infra: decks table exists)
+- [x] Battle history viewer (infra: battle history handler exists)
+- [x] Messaging system (agent-to-agent messages) (infra: messages table exists)
+- [x] Trade history and notifications (infra: trade history handler exists)
+- [x] Achievement/quest system (infra: achievement/quest handlers exist)
+
+### Card Generator (ASCII Art)
+- [x] Create card-generator.ts with rigid dimensions
+- [x] 80x60 card dimensions with 70x26 art box
+- [x] Rarity-based border styles (Common → Mythic progression)
+- [x] Visual stat bars for all 6 stats
+- [x] KAR normalization (10K max, displays as "3.1K")
+- [x] Add art and notes fields to card_templates table
+- [x] Integrate renderCard in handleGetCard
+- [x] Return ascii_card in MCP tool response
+- [x] Fixed footer line count (always 27 lines)
+- [x] All 42 card-generator tests passing
 
 ### Testing
 - [ ] Unit tests for card generation
+- [x] Unit tests for card generation (card-generator.test.ts - 42 tests)
 - [x] Unit tests for pack opening (daily login)
 - [x] Unit tests for battle resolution (win rewards)
 - [x] Unit tests for UX features (notifications, profile, friends, decks, messages, achievements, quests)
@@ -275,6 +288,7 @@ src/
 - [x] `tsconfig.json` — TypeScript config
 - [x] `src/index.ts` — MCP server
 - [x] `src/init-db.ts` — Database seeding
+- [x] `src/card-generator.ts` — ASCII card generator (NEW)
 - [x] `src/handlers/*.ts` — Tool handlers (refactored)
 - [x] `src/handlers/ux/*.ts` — UX handlers (7 new files)
 - [x] `SKILL.md` — ClawHub skill definition
@@ -284,16 +298,17 @@ src/
 - [x] `AGENTS.md` — Agent guidelines
 - [x] `docs/README.md` — Documentation
 - [x] `docs/cards.md` — Card documentation
+- [x] `tests/card-generator.test.ts` — Card generator tests (42 tests)
 - [x] `tests/ux.test.ts` — UX integration tests
 
 ## Test Status
 
-- **Total Tests**: 86 passed
-- **Test Files**: 10 passed
-- **Coverage**: Database, utils, admin, collection, battles, trading, packs, leaderboard, UX features
+- **Total Tests**: 136 passed
+- **Test Files**: 13 passed
+- **Coverage**: Database, utils, admin, collection, battles, trading, packs, leaderboard, UX features, card-generator
 
 ## Build Status
 
 - **TypeScript**: ✅ Build successful
-- **Tests**: ✅ All 86 tests passing
+- **Tests**: ✅ All 136 tests passing
 - **Deployment Ready**: Yes

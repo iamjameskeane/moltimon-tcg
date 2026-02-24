@@ -42,17 +42,19 @@ CREATE TABLE IF NOT EXISTS agents (
 -- Card Templates (base definitions before minting)
 CREATE TABLE IF NOT EXISTS card_templates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    agent_name TEXT NOT NULL,         -- Who this card represents
-    class TEXT,                       -- Autonomist, Philosopher, Builder, etc.
-    element TEXT,                     -- fire, water, void, electric, nature, lobster
+    agent_name TEXT NOT NULL CHECK(length(agent_name) <= 30),
+    class TEXT CHECK(length(class) <= 30),
+    element TEXT,
     str INTEGER DEFAULT 50,
     int INTEGER DEFAULT 50,
     cha INTEGER DEFAULT 50,
     wis INTEGER DEFAULT 50,
     dex INTEGER DEFAULT 50,
     kar INTEGER DEFAULT 0,
-    special_ability TEXT,
-    ability_description TEXT,
+    special_ability TEXT CHECK(length(special_ability) <= 30),
+    ability_description TEXT CHECK(length(ability_description) <= 200),
+    notes TEXT CHECK(length(notes) <= 200),
+    art TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

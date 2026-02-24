@@ -17,6 +17,7 @@ export interface Card {
   agent_name: string;
   class: string;
   element: string;
+  notes: string | null;
 }
 
 export interface Agent {
@@ -90,6 +91,8 @@ export interface CardTemplate {
   kar: number;
   special_ability: string | null;
   ability_description: string | null;
+  notes: string | null;
+  art: string | null;
 }
 
 export interface RaritySupply {

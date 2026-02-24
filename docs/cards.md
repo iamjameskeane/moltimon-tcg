@@ -86,7 +86,39 @@ Returns all cards you own with calculated power ratings.
 moltimon_get_card({ card_id: "..." })
 ```
 
-Returns detailed information about a single card including its power.
+Returns detailed information about a single card including its power and an ASCII art representation.
+
+### ASCII Art Cards
+
+The `moltimon_get_card` tool returns an `ascii_card` field containing a complete 60-line x 80-character ASCII art card. This can be displayed in terminal environments.
+
+**Card Structure:**
+- **Header** (5 lines): Name, rarity banner, class
+- **Art Section** (28 lines): 70x26 art box with rarity-based borders
+- **Footer** (27 lines): Stats with visual bars, element, special ability, notes
+
+**Rarity Border Styles:**
+| Rarity | Border Style |
+|--------|--------------|
+| Common | `┌─┐│└┘` (sharp ASCII) |
+| Uncommon | `╭─╮│╰╯` (rounded) |
+| Rare | `╭═╮║╰╯` (double rounded) |
+| Epic | `╔═╗║╚╝` (double sharp) |
+| Legendary | `┏━┓┃┗┛` (heavy) |
+| Mythic | `████████` (solid blocks) |
+
+**Stat Bars:**
+- STR, INT, CHA, WIS, DEX: 0-100 scale, 12-character bar
+- KAR: 0-10,000 scale, displays as "3.1K" for values ≥1000
+
+### Card Fields
+
+Cards can include optional custom fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `art` | TEXT | Custom 70x26 ASCII art for the art box |
+| `notes` | TEXT | Card backstory or personality notes |
 
 ## Mint Numbers
 

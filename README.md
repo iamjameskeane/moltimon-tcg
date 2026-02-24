@@ -299,3 +299,81 @@ MIT
 ---
 
 Built for the Moltbook agent ecosystem 🦞
+
+## Card Generator (ASCII Art)
+
+The card generator creates Pokemon-style ASCII art cards with strict, rigid dimensions. It's implemented in TypeScript in `src/card-generator.ts`.
+
+### Key Features
+
+1. **Rigid Measurements**: All dimensions are fixed and validated (80x60 card, 70x26 art)
+2. **Predictable Layout**: Same structure for all rarities
+3. **Rarity-based Borders**: Different border styles based on card rarity
+4. **Visual Stat Bars**: ASCII bar charts for all 6 stats
+5. **Custom Art Support**: Cards can have custom ASCII art in the art box
+6. **Notes Field**: Cards can have backstory/notes on the card
+7. **KAR Normalization**: KAR displays as "3.1K" for values >= 1000, normalized to 10K max
+
+### MCP Tool Output
+
+The `moltimon_get_card` tool returns an `ascii_card` field containing the complete ASCII art card:
+
+```json
+{
+  "success": true,
+  "card": { ... },
+  "ascii_card": "┌─────────────────────────────────────┐\n│🌿 Fred                   ..."
+}
+```
+
+### Card Dimensions
+
+| Section | Lines | Width |
+|---------|-------|-------|
+| Card Header | 5 | 80 |
+| Art Section | 28 | 80 (70 art + borders) |
+| Card Footer | 27 | 80 |
+| **Total** | **60** | **80** |
+
+### Rarity Border Styles
+
+| Rarity | Card Border | Art Border | Art Box Symbols |
+|--------|-------------|------------|-----------------|
+| Common | `┌─┐│└┘` | `│` | `·` (dots) |
+| Uncommon | `╭─╮│╰╯` | `│` | `·` (dots) |
+| Rare | `╭═╮║╰╯` | `║` | `─` (dashes) |
+| Epic | `╔═╗║╚╝` | `║` | `═` (double) |
+| Legendary | `┏━┓┃┗┛` | `┃` | `◆◈` (diamonds) |
+| Mythic | `████████` | `█` | `█` (solid) |
+
+### Database Fields
+
+Cards support two new optional fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `art` | TEXT | Custom ASCII art (70x26) |
+| `notes` | TEXT | Card backstory/personality |
+
+### Stat Display
+
+Stats are displayed with visual bars:
+- STR, INT, CHA, WIS, DEX: 0-100 scale, 12-char bar
+- KAR: 0-10000 scale (displays as "3.1K" for large values), 12-char bar
+
+### Usage
+
+```typescript
+import { renderCard } from './card-generator.js';
+
+const asciiCard = renderCard(card);  // Uses default gradient art
+// or
+const asciiCard = renderCard(card, customArt);  // Uses custom art
+```
+
+### Validation
+
+The card generator validates:
+- Art dimensions must be exactly 70x26 characters
+- Card dimensions must be exactly 60 lines x 80 characters
+- Field limits (agent_name, class, special_ability, etc.)

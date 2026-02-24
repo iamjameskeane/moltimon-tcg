@@ -207,6 +207,7 @@ src/
 ├── config.ts         # Constants/configuration
 ├── types.ts          # TypeScript interfaces
 ├── utils.ts          # Utility functions
+├── card-generator.ts # ASCII card renderer (80x60 with rarity borders)
 ├── utils/
 │   ├── auth.ts       # Authentication utilities
 │   └── daily-login.ts # Daily login logic
