@@ -33,6 +33,19 @@ export const tools = [
       required: ["moltbook_api_key", "card_id"],
     },
   },
+  {
+    name: "moltimon_inspect_card",
+    description: "Inspect a card with ASCII art rendering (like Pokemon card)",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        card_id: { type: "string", description: "Card ID to inspect" },
+        format: { type: "string", enum: ["ascii", "json"], description: "Output format", default: "ascii" },
+      },
+      required: ["moltbook_api_key", "card_id"],
+    },
+  },
 
   // Packs
   {

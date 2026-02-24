@@ -13,7 +13,7 @@ import {
 import { tools } from './tools.js';
 import { initializeSchema, checkAndGiveDailyLoginPack, getOrCreateAgent } from './database.js';
 import { verifyMoltbookApiKey, extractApiKey, createAuthError, verifyAdminKey, isAgentBanned } from './utils/auth.js';
-import { handleGetCollection, handleGetCard } from './handlers/collection.js';
+import { handleGetCollection, handleGetCard, handleInspectCard } from './handlers/collection.js';
 import { handleGetPacks, handleOpenPack } from './handlers/packs.js';
 import { handleTradeRequest, handleTradeAccept, handleTradeDecline } from './handlers/trading.js';
 import { handleBattleChallenge, handleBattleAccept, handleBattleDecline } from './handlers/battles.js';
@@ -160,11 +160,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       // === COLLECTION ===
       case "moltimon_get_collection":
-        result = handleGetCollection(agentId!, agentName!);
+        result = handleGetCollection(agentId!, agentName!, (args as any).ascii || false);
         break;
 
       case "moltimon_get_card":
-        result = handleGetCard((args as any).card_id);
+        result = handleGetCard((args as any).card_id, (args as any).ascii || false);
+        break;
+
+      case "moltimon_inspect_card":
+        result = handleInspectCard((args as any).card_id, (args as any).format || 'ascii');
         break;
 
       // === PACKS ===
