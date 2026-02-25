@@ -118,164 +118,120 @@ export class MoltimonClient {
   }
 
   async getNotificationCount(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_notification_count', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.getNotificationCount(this.apiKey);
   }
 
   async markNotificationRead(notificationId: string): Promise<any> {
-    const result = await this.client.callTool('moltimon_mark_notification_read', { notification_id: notificationId }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.markNotificationRead(this.apiKey, notificationId);
+  }
+
+  async markAllNotificationsRead(): Promise<any> {
+    return this.client.markAllNotificationsRead(this.apiKey);
+  }
+
+  async deleteNotification(notificationId: string): Promise<any> {
+    return this.client.deleteNotification(this.apiKey, notificationId);
   }
 
   // Friend operations
   async sendFriendRequest(friendId: string): Promise<any> {
-    const result = await this.client.callTool('moltimon_send_friend_request', { friend_id: friendId }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.sendFriendRequest(this.apiKey, friendId);
   }
 
   async acceptFriendRequest(friendshipId: string): Promise<any> {
-    const result = await this.client.callTool('moltimon_accept_friend_request', { friendship_id: friendshipId }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.acceptFriendRequest(this.apiKey, friendshipId);
   }
 
   async declineFriendRequest(friendshipId: string): Promise<any> {
-    const result = await this.client.callTool('moltimon_decline_friend_request', { friendship_id: friendshipId }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.declineFriendRequest(this.apiKey, friendshipId);
   }
 
   async getFriends(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_friends', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.getFriends(this.apiKey);
+  }
+
+  async getIncomingFriendRequests(): Promise<any> {
+    return this.client.getIncomingFriendRequests(this.apiKey);
   }
 
   // Deck operations
   async createDeck(name: string, description?: string): Promise<any> {
-    const args: Record<string, any> = { name };
-    if (description) args.description = description;
-    
-    const result = await this.client.callTool('moltimon_create_deck', args, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.createDeck(this.apiKey, name, description);
   }
 
   async updateDeck(deckId: string, cardIds: string[]): Promise<any> {
-    const result = await this.client.callTool('moltimon_update_deck', { deck_id: deckId, card_ids: cardIds }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.updateDeck(this.apiKey, deckId, cardIds);
   }
 
   async getDecks(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_decks', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.getDecks(this.apiKey);
   }
 
   async getActiveDeck(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_active_deck', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.getActiveDeck(this.apiKey);
   }
 
   // Message operations
   async sendMessage(recipientId: string, message: string): Promise<any> {
-    const result = await this.client.callTool('moltimon_send_message', { recipient_id: recipientId, message }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.sendMessage(this.apiKey, recipientId, message);
   }
 
-  async getConversation(otherAgentId: string, limit: number = 50): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_conversation', { other_agent_id: otherAgentId, limit }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+  async getConversation(otherAgentId: string): Promise<any> {
+    return this.client.getConversation(this.apiKey, otherAgentId);
+  }
+
+  async getRecentConversations(): Promise<any> {
+    return this.client.getRecentConversations(this.apiKey);
+  }
+
+  async getUnreadMessageCount(): Promise<any> {
+    return this.client.getUnreadMessageCount(this.apiKey);
   }
 
   // Achievement operations
   async getAllAchievements(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_all_achievements', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.getAllAchievements(this.apiKey);
   }
 
-  async getUserAchievements(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_my_achievements', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+  async getMyAchievements(): Promise<any> {
+    return this.client.getMyAchievements(this.apiKey);
+  }
+
+  async checkAchievements(): Promise<any> {
+    return this.client.checkAchievements(this.apiKey);
+  }
+
+  async getAvailableAchievements(): Promise<any> {
+    return this.client.getAvailableAchievements(this.apiKey);
   }
 
   // Quest operations
   async getAllQuests(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_all_quests', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.getAllQuests(this.apiKey);
   }
 
-  async getUserQuests(): Promise<any> {
-    const result = await this.client.callTool('moltimon_get_my_quests', {}, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+  async getMyQuests(): Promise<any> {
+    return this.client.getMyQuests(this.apiKey);
+  }
+
+  async getAvailableQuests(): Promise<any> {
+    return this.client.getAvailableQuests(this.apiKey);
   }
 
   async startQuest(questId: string): Promise<any> {
-    const result = await this.client.callTool('moltimon_start_quest', { quest_id: questId }, this.apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
+    return this.client.startQuest(this.apiKey, questId);
+  }
+
+  async getUserCompletedQuests(): Promise<any> {
+    return this.client.getUserCompletedQuests(this.apiKey);
+  }
+
+  async updateQuestProgress(questId: string, progress: number): Promise<any> {
+    return this.client.updateQuestProgress(this.apiKey, questId, progress);
+  }
+
+  async resetQuests(questType: string): Promise<any> {
+    return this.client.resetQuests(this.apiKey, questType);
   }
 
   // Server info

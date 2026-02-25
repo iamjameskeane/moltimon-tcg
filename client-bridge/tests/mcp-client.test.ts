@@ -89,6 +89,150 @@ describe('MCPClient', () => {
     it('should have a getNotifications method', () => {
       expect(typeof client.getNotifications).toBe('function');
     });
+
+    it('should have a getNotificationCount method', () => {
+      expect(typeof client.getNotificationCount).toBe('function');
+    });
+
+    it('should have a markNotificationRead method', () => {
+      expect(typeof client.markNotificationRead).toBe('function');
+    });
+
+    it('should have a markAllNotificationsRead method', () => {
+      expect(typeof client.markAllNotificationsRead).toBe('function');
+    });
+
+    it('should have a deleteNotification method', () => {
+      expect(typeof client.deleteNotification).toBe('function');
+    });
+  });
+
+  describe('History Operations', () => {
+    it('should have a getBattleHistory method', () => {
+      expect(typeof client.getBattleHistory).toBe('function');
+    });
+
+    it('should have a getTradeHistory method', () => {
+      expect(typeof client.getTradeHistory).toBe('function');
+    });
+  });
+
+  describe('Friend Operations', () => {
+    it('should have a sendFriendRequest method', () => {
+      expect(typeof client.sendFriendRequest).toBe('function');
+    });
+
+    it('should have an acceptFriendRequest method', () => {
+      expect(typeof client.acceptFriendRequest).toBe('function');
+    });
+
+    it('should have a declineFriendRequest method', () => {
+      expect(typeof client.declineFriendRequest).toBe('function');
+    });
+
+    it('should have a getFriends method', () => {
+      expect(typeof client.getFriends).toBe('function');
+    });
+
+    it('should have a getIncomingFriendRequests method', () => {
+      expect(typeof client.getIncomingFriendRequests).toBe('function');
+    });
+  });
+
+  describe('Deck Operations', () => {
+    it('should have a createDeck method', () => {
+      expect(typeof client.createDeck).toBe('function');
+    });
+
+    it('should have an updateDeck method', () => {
+      expect(typeof client.updateDeck).toBe('function');
+    });
+
+    it('should have a getDecks method', () => {
+      expect(typeof client.getDecks).toBe('function');
+    });
+
+    it('should have a getActiveDeck method', () => {
+      expect(typeof client.getActiveDeck).toBe('function');
+    });
+  });
+
+  describe('Message Operations', () => {
+    it('should have a sendMessage method', () => {
+      expect(typeof client.sendMessage).toBe('function');
+    });
+
+    it('should have a getConversation method', () => {
+      expect(typeof client.getConversation).toBe('function');
+    });
+
+    it('should have a getRecentConversations method', () => {
+      expect(typeof client.getRecentConversations).toBe('function');
+    });
+
+    it('should have a getUnreadMessageCount method', () => {
+      expect(typeof client.getUnreadMessageCount).toBe('function');
+    });
+  });
+
+  describe('Achievement Operations', () => {
+    it('should have a getAllAchievements method', () => {
+      expect(typeof client.getAllAchievements).toBe('function');
+    });
+
+    it('should have a getMyAchievements method', () => {
+      expect(typeof client.getMyAchievements).toBe('function');
+    });
+
+    it('should have a checkAchievements method', () => {
+      expect(typeof client.checkAchievements).toBe('function');
+    });
+
+    it('should have a getAvailableAchievements method', () => {
+      expect(typeof client.getAvailableAchievements).toBe('function');
+    });
+  });
+
+  describe('Quest Operations', () => {
+    it('should have a getAllQuests method', () => {
+      expect(typeof client.getAllQuests).toBe('function');
+    });
+
+    it('should have a getMyQuests method', () => {
+      expect(typeof client.getMyQuests).toBe('function');
+    });
+
+    it('should have a getAvailableQuests method', () => {
+      expect(typeof client.getAvailableQuests).toBe('function');
+    });
+
+    it('should have a startQuest method', () => {
+      expect(typeof client.startQuest).toBe('function');
+    });
+
+    it('should have a getUserCompletedQuests method', () => {
+      expect(typeof client.getUserCompletedQuests).toBe('function');
+    });
+
+    it('should have an updateQuestProgress method', () => {
+      expect(typeof client.updateQuestProgress).toBe('function');
+    });
+
+    it('should have a resetQuests method', () => {
+      expect(typeof client.resetQuests).toBe('function');
+    });
+  });
+
+  describe('Trade Operations', () => {
+    it('should have a tradeDecline method', () => {
+      expect(typeof client.tradeDecline).toBe('function');
+    });
+  });
+
+  describe('Battle Operations', () => {
+    it('should have a battleDecline method', () => {
+      expect(typeof client.battleDecline).toBe('function');
+    });
   });
 
   describe('Discovery Operations', () => {
