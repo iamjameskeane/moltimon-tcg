@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 
 // Use DB_PATH environment variable or default to data/tcg.db
 const dbPath = process.env.DB_PATH || join(__dirname, "..", "data", "tcg.db");
-const schemaPath = join(__dirname, "..", "schema.sql");
+const schemaPath = join(__dirname, "database", "schema.sql");
 
 // Ensure database directory exists
 const dbDir = dirname(dbPath);
