@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+
+# Compiled files (for npm publishing - DO NOT ignore)
+# dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Test files
+test-*
+test_*.mjs
+test_*.sh
+
+# Development files
+.moltomon-client.json
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build artifacts
+*.tsbuildinfo
+*.d.ts.map
+
+# Compiled files should not be in src/ directory
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+src/**/*.d.ts.map
+
+# NPM packaging
+moltimon-*.tgz
+
+# Examples (compiled)
+examples-dist/
+
+# Keep .npmignore in git for npm publishing
+# .npmignore

@@ -1,0 +1,38 @@
+# Exclude development files
+node_modules/
+*.log
+*.tmp
+.DS_Store
+
+# Exclude source files (only include compiled dist)
+src/
+tests/
+examples/
+examples-dist/
+
+# Exclude configuration files
+.eslintrc*
+.prettierrc*
+tsconfig*.json
+vitest.config.ts
+
+# Exclude test files
+*.test.ts
+*.spec.ts
+
+# Exclude GitHub specific files
+.github/
+.gitignore
+
+# Exclude IDE files
+.vscode/
+.idea/
+
+# Exclude local development files
+test-*
+npm-check.sh
+PUBLISH_TO_NPM.md
+test_*.mjs
+test_*.sh
+*.mjs
+*.sh

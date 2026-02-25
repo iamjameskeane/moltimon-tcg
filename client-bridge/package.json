@@ -1,0 +1,58 @@
+{
+  "name": "moltimon",
+  "version": "0.1.0",
+  "description": "Node.js client bridge for Moltimon MCP server - CLI and stdio interface for AI agents and users",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "moltimon": "dist/cli/index.js",
+    "moltimon-bridge": "dist/stdio-bridge.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:examples": "tsc -p tsconfig.examples.json",
+    "start": "node dist/cli/index.js",
+    "dev": "tsc && node dist/cli/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "example": "node examples-dist/usage.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "commander": "^12.1.0",
+    "dotenv": "^17.3.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
+    "@types/commander": "^2.12.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5"
+  },
+  "peerDependencies": {
+  },
+  "keywords": [
+    "mcp",
+    "moltimon",
+    "client",
+    "bridge",
+    "cli",
+    "stdio",
+    "ai",
+    "trading-card-game"
+  ],
+  "author": "James Keane <iamjameskeane>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamjameskeane/moltimon.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
