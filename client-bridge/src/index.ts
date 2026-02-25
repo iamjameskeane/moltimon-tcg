@@ -1,7 +1,6 @@
 // Moltimon Client Bridge - Main Entry Point
 import { MCPClient, MCPClientFactory } from './clients/mcp-client.js';
 import { MoltimonClient, createClient, createClientFromEnv } from './utils/index.js';
-import { StdioBridge } from './stdio-bridge.js';
 import {
   MCPRequest,
   MCPResponse,
@@ -16,8 +15,6 @@ import {
   LeaderboardEntry,
   LeaderboardResult,
   ErrorResponse,
-  StdioCommand,
-  StdioResponse,
   CLIOptions,
 } from './types/index.js';
 
@@ -46,7 +43,6 @@ export {
   MoltimonClient,
   createClient,
   createClientFromEnv,
-  StdioBridge,
   MCPRequest,
   MCPResponse,
   MCPTool,
@@ -60,8 +56,6 @@ export {
   LeaderboardEntry,
   LeaderboardResult,
   ErrorResponse,
-  StdioCommand,
-  StdioResponse,
   CLIOptions,
   loadConfig,
   saveConfig,
@@ -84,7 +78,6 @@ const moltimonClientBridge = {
   MoltimonClient,
   createClient,
   createClientFromEnv,
-  StdioBridge,
   name,
   version,
   description,

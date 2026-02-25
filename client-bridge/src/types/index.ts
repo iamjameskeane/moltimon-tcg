@@ -132,20 +132,6 @@ export interface ErrorResponse {
   error: string;
 }
 
-export interface StdioCommand {
-  action: string;
-  args?: Record<string, any>;
-  config?: ClientConfig;
-}
-
-export interface StdioResponse {
-  success: boolean;
-  data?: any;
-  error?: string;
-  command?: string;
-  timestamp: string;
-}
-
 export interface CLIOptions {
   serverUrl?: string;
   apiKey?: string;

@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-# Compiled files (for npm publishing - DO NOT ignore)
-# dist/
+# Compiled files
+dist/
 
 # Environment files
 .env
@@ -58,6 +58,3 @@ moltimon-*.tgz
 
 # Examples (compiled)
 examples-dist/
-
-# Keep .npmignore in git for npm publishing
-# .npmignore

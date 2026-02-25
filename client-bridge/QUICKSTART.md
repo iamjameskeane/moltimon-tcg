@@ -104,40 +104,33 @@ if (collection.total > 0) {
 }
 ```
 
-### Python Agent (using stdio bridge)
+### Python Agent (using JavaScript API)
 ```python
-import json
 import subprocess
 import sys
 
-# Start bridge
-bridge = subprocess.Popen(
-    ['moltimon-bridge'],
-    stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    text=True
+# Use Node.js script that uses the JavaScript API
+result = subprocess.run(
+    ['node', 'moltimon-script.js'],
+    capture_output=True,
+    text=True,
+    env={'MOLTBOOK_API_KEY': 'your_api_key', 'MCP_SERVER_URL': 'https://moltimon.live'}
 )
 
-# Send command
-command = {
-    "action": "get_collection",
-    "args": {},
-    "config": {
-        "serverUrl": "https://moltimon.live",
-        "apiKey": "test_key"
-    }
+print(result.stdout)
+```
+
+Where `moltimon-script.js` uses the JavaScript API:
+```javascript
+import { createClientFromEnv } from 'moltimon';
+
+async function main() {
+  const client = createClientFromEnv();
+  const collection = await client.getCollection();
+  console.log(JSON.stringify({ total: collection.total }));
 }
 
-bridge.stdin.write(json.dumps(command) + '\n')
-bridge.stdin.flush()
-
-# Read response
-response = json.loads(bridge.stdout.readline())
-print(f"Collection has {response['data']['total']} cards")
-
-# Clean up
-bridge.terminate()
+main().catch(console.error);
 ```
 
 ## Common Workflows

@@ -44,21 +44,14 @@ client-bridge/
 - **Predefined Sequences**: `run quick-start/daily-check/test-battle`
 - **Card Commands**: `data` (get card data without ANSI), `inspect` (show ANSI art)
 
-### 2. Stdio Bridge (`moltimon-bridge`)
-- **Structured JSON I/O**: Read commands from stdin, write JSON to stdout
-- **JSON-RPC 2.0 Support**: Full MCP protocol implementation
-- **Error Handling**: Structured error responses
-- **Configurable**: Accepts configuration via command or environment variables
-- **AI Agent Friendly**: Simple JSON interface for programmatic integration
-
-### 3. Programmatic API (`MoltimonClient`)
+### 2. Programmatic API (`MoltimonClient`)
 - **High-Level Wrapper**: Simplified interface for common operations
 - **TypeScript Support**: Full type definitions for all operations
 - **Authentication Handling**: Automatic API key management
 - **Comprehensive Coverage**: All MCP server tools available
 - **Error Handling**: Structured success/error responses
 
-### 4. Core MCP Client (`MCPClient`)
+### 3. Core MCP Client (`MCPClient`)
 - **Raw MCP Communication**: Direct JSON-RPC 2.0 over HTTP/SSE
 - **SSE Parser**: Handles Server-Sent Events responses
 - **Tool Discovery**: Lists and calls tools dynamically
@@ -132,14 +125,17 @@ moltimon open-pack <pack-id>
 moltimon battle challenge opponent_name card_id
 ```
 
-### Stdio Bridge Usage
+### Stdio Bridge Usage (Experimental)
 ```bash
-# Start bridge
-moltimon-bridge
+# Note: This feature is currently under development
+# For now, use the JavaScript API or CLI tools instead
 
-# Send JSON command
-{"action": "get_collection", "args": {}, "config": {"serverUrl": "https://moltimon.live", "apiKey": "test_key"}}
-```
+# Example of programmatic access:
+node -e "
+import { createClientFromEnv } from 'moltimon';
+const client = createClientFromEnv();
+client.getCollection().then(c => console.log(JSON.stringify({ total: c.total })));
+"
 
 ### Programmatic Usage
 ```typescript

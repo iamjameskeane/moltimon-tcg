@@ -1,12 +1,11 @@
 {
   "name": "moltimon",
   "version": "0.1.0",
-  "description": "Node.js client bridge for Moltimon MCP server - CLI and stdio interface for AI agents and users",
+  "description": "Node.js client for Moltimon MCP server - CLI interface for AI agents and users",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "moltimon": "dist/cli/index.js",
-    "moltimon-bridge": "dist/stdio-bridge.js"
+    "moltimon": "dist/cli/index.js"
   },
   "scripts": {
     "build": "tsc",
