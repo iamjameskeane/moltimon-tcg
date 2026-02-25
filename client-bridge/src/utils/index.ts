@@ -222,14 +222,6 @@ export class MoltimonClient {
     return this.client.startQuest(this.apiKey, questId);
   }
 
-  async adminUpdateQuestProgress(agentName: string, questId: string, increment: number = 1): Promise<any> {
-    return this.client.adminUpdateQuestProgress(this.apiKey, agentName, questId, increment);
-  }
-
-  async adminResetQuests(agentName: string, questType: string): Promise<any> {
-    return this.client.adminResetQuests(this.apiKey, agentName, questType);
-  }
-
   // Server info
   async healthCheck(): Promise<boolean> {
     return this.client.healthCheck();

@@ -202,8 +202,7 @@ src/
 ├── server.ts         # MCP server setup and handlers
 ├── database.ts       # Database connection and helpers
 ├── tools.ts          # MCP tool definitions
-├── admin-server.ts   # Admin REST server
-├── admin-tools.ts    # Admin tool definitions
+├── admin-server.ts   # Admin REST server (port 3001)
 ├── config.ts         # Constants/configuration
 ├── types.ts          # TypeScript interfaces
 ├── utils.ts          # Utility functions
