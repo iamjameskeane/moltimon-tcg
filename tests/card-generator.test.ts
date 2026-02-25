@@ -316,9 +316,11 @@ describe('Art Embedding', () => {
     expect(embedded[embedded.length - 1]).toContain('◈');
   });
 
-  it('should throw for art with wrong dimensions', () => {
+  it('should normalize art with wrong dimensions instead of throwing', () => {
     const art = 'A'.repeat(50);
-    expect(() => embedArt(art)).toThrow(DimensionError);
+    const embedded = embedArt(art);
+    // normalizeArt pads/trims to ART_WIDTH x ART_HEIGHT, so embedArt succeeds
+    expect(embedded.length).toBe(ART_HEIGHT + 2);
   });
 });
 
@@ -393,9 +395,12 @@ describe('Card Composition', () => {
     }
   });
 
-  it('should throw for art with wrong dimensions', () => {
+  it('should normalize art with wrong dimensions instead of throwing', () => {
     const wrongArt = 'A'.repeat(50) + '\n' + 'A'.repeat(50);
-    expect(() => composeCard(testCard, wrongArt)).toThrow(DimensionError);
+    const card = composeCard(testCard, wrongArt);
+    const lines = card.split('\n');
+    // normalizeArt pads/trims to correct dimensions, so composeCard succeeds
+    expect(lines.length).toBe(CARD_HEIGHT);
   });
 
   it('should include all card sections', () => {
@@ -456,9 +461,12 @@ describe('Render Card', () => {
     expect(card).toContain('XXXXXXXX');
   });
 
-  it('should throw for invalid custom art', () => {
+  it('should normalize invalid custom art instead of throwing', () => {
     const invalidArt = 'A'.repeat(50);
-    expect(() => renderCard(testCard, invalidArt)).toThrow(DimensionError);
+    const card = renderCard(testCard, invalidArt);
+    const lines = card.split('\n');
+    // normalizeArt pads/trims to correct dimensions, so renderCard succeeds
+    expect(lines.length).toBe(CARD_HEIGHT);
   });
 });
 

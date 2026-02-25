@@ -133,13 +133,177 @@ export class DimensionError extends Error {
 
 /**
  * Strips ANSI escape codes from a string to get visual width
- * Handles: cursor movement, colors (3/4 bit, 256, truecolor), bold, etc.
+ * Handles: cursor movement, colors (3/4 bit, 256, truecolor), bold,
+ * cursor visibility (e.g. \x1b[?25l, \x1b[?25h), and other CSI sequences.
  */
-function stripAnsiCodes(str: string): string {
+export function stripAnsiCodes(str: string): string {
   return str.replace(
-    /[\x1b\x9b](?:\[[0-9;]*[A-Za-z]|\(B)/g,
+    /[\x1b\x9b](?:\[[?]?[0-9;]*[A-Za-z]|\(B)/g,
     ''
   );
+}
+
+/**
+ * Returns the terminal display width of a string, accounting for:
+ * - ANSI escape codes (zero width)
+ * - Wide/fullwidth Unicode characters like emojis (2 columns)
+ *
+ * Uses East Asian Width property: characters with Wide (W) or Fullwidth (F)
+ * property take 2 terminal columns; all others take 1.
+ */
+export function getDisplayWidth(str: string): number {
+  const stripped = stripAnsiCodes(str);
+  let width = 0;
+  for (const char of stripped) {
+    const code = char.codePointAt(0)!;
+    if (isWideCharacter(code)) {
+      width += 2;
+    } else {
+      width += 1;
+    }
+  }
+  return width;
+}
+
+/**
+ * Checks if a Unicode code point is a wide character in a terminal.
+ * Based on East Asian Width property: only W (Wide) and F (Fullwidth)
+ * characters occupy 2 terminal columns. Characters with Ambiguous (A)
+ * or Narrow (N) width are treated as 1 column (standard in non-CJK locales).
+ */
+function isWideCharacter(code: number): boolean {
+  return (
+    // Fullwidth Forms (F)
+    (code >= 0xFF01 && code <= 0xFF60) ||
+    (code >= 0xFFE0 && code <= 0xFFE6) ||
+    // CJK Unified Ideographs (W)
+    (code >= 0x4E00 && code <= 0x9FFF) ||
+    // CJK Unified Ideographs Extension A (W)
+    (code >= 0x3400 && code <= 0x4DBF) ||
+    // CJK Compatibility Ideographs (W)
+    (code >= 0xF900 && code <= 0xFAFF) ||
+    // CJK Unified Ideographs Extension B+ (W)
+    (code >= 0x20000 && code <= 0x2FA1F) ||
+    // Hangul Syllables (W)
+    (code >= 0xAC00 && code <= 0xD7AF) ||
+    // CJK Radicals Supplement (W)
+    (code >= 0x2E80 && code <= 0x2EFF) ||
+    // Kangxi Radicals (W)
+    (code >= 0x2F00 && code <= 0x2FDF) ||
+    // CJK Symbols and Punctuation (W) - except U+3000 ideographic space
+    (code >= 0x3000 && code <= 0x303F) ||
+    // Hiragana (W)
+    (code >= 0x3040 && code <= 0x309F) ||
+    // Katakana (W)
+    (code >= 0x30A0 && code <= 0x30FF) ||
+    // Katakana Phonetic Extensions (W)
+    (code >= 0x31F0 && code <= 0x31FF) ||
+    // Enclosed CJK Letters (W)
+    (code >= 0x3200 && code <= 0x32FF) ||
+    // CJK Compatibility (W)
+    (code >= 0x3300 && code <= 0x33FF) ||
+    // Bopomofo (W)
+    (code >= 0x3100 && code <= 0x312F) ||
+    // Miscellaneous Symbols and Pictographs - emojis (W)
+    (code >= 0x1F300 && code <= 0x1F5FF) ||
+    // Emoticons (W)
+    (code >= 0x1F600 && code <= 0x1F64F) ||
+    // Transport and Map Symbols (W)
+    (code >= 0x1F680 && code <= 0x1F6FF) ||
+    // Supplemental Symbols and Pictographs (W)
+    (code >= 0x1F900 && code <= 0x1F9FF) ||
+    // Symbols and Pictographs Extended-A (W)
+    (code >= 0x1FA00 && code <= 0x1FA6F) ||
+    // Symbols and Pictographs Extended-B (W)
+    (code >= 0x1FA70 && code <= 0x1FAFF) ||
+    // Enclosed Alphanumeric Supplement (W)
+    (code >= 0x1F100 && code <= 0x1F1FF) ||
+    // Specific wide symbols in Miscellaneous Symbols block (mostly Ambiguous,
+    // but some are W per Unicode 15.0+)
+    code === 0x26A1 || // ⚡ HIGH VOLTAGE
+    code === 0x2728 || // ✨ SPARKLES
+    // Mahjong Tiles (W)
+    (code >= 0x1F000 && code <= 0x1F02F) ||
+    // Playing Cards (W)
+    (code >= 0x1F0A0 && code <= 0x1F0FF)
+  );
+}
+
+/**
+ * Normalizes art from external sources (e.g. chafa ANSI output) to match
+ * the required dimensions for card embedding.
+ *
+ * Handles common issues:
+ * - Cursor visibility sequences (\x1b[?25l / \x1b[?25h) injected by chafa
+ * - Trailing newlines and empty lines
+ * - Lines that are too narrow (pads with spaces to requiredWidth)
+ * - Lines that are too wide (truncates preserving ANSI codes at line end)
+ * - Too many or too few lines (trims or pads with space-filled lines)
+ *
+ * @param art - Raw ANSI art string (e.g. from chafa)
+ * @param requiredWidth - Required visual width per line (default ART_WIDTH)
+ * @param requiredHeight - Required number of lines (default ART_HEIGHT)
+ * @returns Normalized art string with exact dimensions
+ */
+export function normalizeArt(
+  art: string,
+  requiredWidth: number = ART_WIDTH,
+  requiredHeight: number = ART_HEIGHT
+): string {
+  // 1. Strip cursor visibility sequences that chafa wraps output with
+  let cleaned = art.replace(/\x1b\[\?25[lh]/g, '');
+
+  // 2. Strip any standalone ANSI reset at very start/end
+  cleaned = cleaned.replace(/^\x1b\[0m/, '');
+  cleaned = cleaned.replace(/\x1b\[0m$/, '');
+
+  // 3. Split into lines and remove trailing empty lines
+  let lines = cleaned.split('\n');
+  while (lines.length > 0 && stripAnsiCodes(lines[lines.length - 1]).trim() === '') {
+    lines.pop();
+  }
+
+  // 4. Normalize each line's visual width
+  lines = lines.map((line) => {
+    const visualWidth = stripAnsiCodes(line).length;
+    if (visualWidth < requiredWidth) {
+      // Pad with spaces (append after any trailing ANSI reset)
+      return line + ' '.repeat(requiredWidth - visualWidth);
+    } else if (visualWidth > requiredWidth) {
+      // Need to truncate to requiredWidth visual characters.
+      // Walk the string tracking visual position, keeping ANSI sequences.
+      let result = '';
+      let visCount = 0;
+      let i = 0;
+      while (i < line.length && visCount < requiredWidth) {
+        // Check for ANSI escape sequence
+        const ansiMatch = line.slice(i).match(/^(?:[\x1b\x9b](?:\[\??\d*(?:;\d*)*[A-Za-z]|\(B))/);
+        if (ansiMatch) {
+          result += ansiMatch[0];
+          i += ansiMatch[0].length;
+        } else {
+          result += line[i];
+          visCount++;
+          i++;
+        }
+      }
+      // Append reset to close any open color sequences
+      result += '\x1b[0m';
+      return result;
+    }
+    return line;
+  });
+
+  // 5. Normalize line count
+  if (lines.length > requiredHeight) {
+    lines = lines.slice(0, requiredHeight);
+  } else {
+    while (lines.length < requiredHeight) {
+      lines.push(' '.repeat(requiredWidth));
+    }
+  }
+
+  return lines.join('\n');
 }
 
 /**
@@ -258,9 +422,29 @@ export function createVerticalBorderLine(
   rightBorder: string,
   totalWidth: number
 ): string {
-  const contentWidth = totalWidth - leftBorder.length - rightBorder.length;
-  const paddedContent = content.padEnd(contentWidth, ' ').slice(0, contentWidth);
-  return leftBorder + paddedContent + rightBorder;
+  const borderWidth = getDisplayWidth(leftBorder) + getDisplayWidth(rightBorder);
+  const contentWidth = totalWidth - borderWidth;
+  const displayWidth = getDisplayWidth(content);
+
+  if (displayWidth < contentWidth) {
+    // Pad with spaces to fill remaining display width
+    const padding = contentWidth - displayWidth;
+    return leftBorder + content + ' '.repeat(padding) + rightBorder;
+  } else if (displayWidth > contentWidth) {
+    // Truncate content to fit within contentWidth display columns
+    let truncated = '';
+    let currentWidth = 0;
+    for (const char of content) {
+      const charWidth = isWideCharacter(char.codePointAt(0)!) ? 2 : 1;
+      if (currentWidth + charWidth > contentWidth) break;
+      truncated += char;
+      currentWidth += charWidth;
+    }
+    // Fill any remaining space (e.g. if we stopped before a wide char)
+    const remaining = contentWidth - currentWidth;
+    return leftBorder + truncated + ' '.repeat(remaining) + rightBorder;
+  }
+  return leftBorder + content + rightBorder;
 }
 
 /**
@@ -280,13 +464,13 @@ export function createCardHeader(card: Card): string[] {
   // Name line with element symbol, mint number flush right
   const nameSection = `${elementSymbol} ${card.agent_name}`;
   const mintSection = `#${card.mint_number}`;
-  const namePadding = CARD_WIDTH - 2 - nameSection.length - mintSection.length;
+  const namePadding = CARD_WIDTH - 2 - getDisplayWidth(nameSection) - getDisplayWidth(mintSection);
   const nameLine = nameSection + ' '.repeat(Math.max(0, namePadding)) + mintSection;
   lines.push(createVerticalBorderLine(nameLine, borderStyle.v, borderStyle.v, CARD_WIDTH));
 
   // Rarity banner line (centered)
   const banner = borderStyle.banner;
-  const bannerPadding = Math.floor((CARD_WIDTH - 2 - banner.length) / 2);
+  const bannerPadding = Math.floor((CARD_WIDTH - 2 - getDisplayWidth(banner)) / 2);
   const bannerLine = ' '.repeat(bannerPadding) + banner;
   lines.push(createVerticalBorderLine(bannerLine, borderStyle.v, borderStyle.v, CARD_WIDTH));
 
@@ -352,7 +536,7 @@ for (const [stat1, val1, stat2, val2, max2] of statPairs) {
   // 5. Element power display
   const elementSymbol = ELEMENT_SYMBOLS[card.element.toLowerCase()] || '◆';
   const elementLine = `${elementSymbol} ${card.element.toUpperCase()} Element`;
-  const elementPadding = Math.floor((CARD_WIDTH - 2 - elementLine.length) / 2);
+  const elementPadding = Math.floor((CARD_WIDTH - 2 - getDisplayWidth(elementLine)) / 2);
   const centeredElementLine = ' '.repeat(elementPadding) + elementLine;
   lines.push(createVerticalBorderLine(centeredElementLine, v, v, CARD_WIDTH));
 
@@ -452,15 +636,16 @@ for (const [stat1, val1, stat2, val2, max2] of statPairs) {
 
 /**
  * Embeds art into the card frame with rarity border
- * @param art - The ASCII art (must be ART_WIDTH x ART_HEIGHT)
+ * @param art - The ASCII art (must be ART_WIDTH x ART_HEIGHT, or normalizable)
  * @param rarity - Rarity for border style (default 'common')
  * @returns Array of art lines with rarity borders, centered in card
- * @throws DimensionError if art dimensions are wrong
+ * @throws DimensionError if art dimensions are wrong after normalization
  */
 export function embedArt(art: string, rarity: string = 'common'): string[] {
-  validateArtDimensions(art, ART_WIDTH, ART_HEIGHT);
+  const normalizedArt = normalizeArt(art, ART_WIDTH, ART_HEIGHT);
+  validateArtDimensions(normalizedArt, ART_WIDTH, ART_HEIGHT);
 
-  const artLines = art.split('\n');
+  const artLines = normalizedArt.split('\n');
   const borderStyle = RARITY_ART_BORDERS[rarity.toLowerCase()] || RARITY_ART_BORDERS.common;
   const cardBorderStyle = RARITY_BORDERS[rarity.toLowerCase()] || RARITY_BORDERS.common;
   const cv = cardBorderStyle.v; // card vertical border
@@ -539,16 +724,17 @@ function validateFieldLimits(card: Card): void {
 /**
  * Composes a complete card from components
  * @param card - Card data
- * @param art - The ASCII art (must be 70x26)
+ * @param art - The ASCII art (must be 70x26, or normalizable to those dimensions)
  * @returns Complete card as string
- * @throws DimensionError if art dimensions are wrong
+ * @throws DimensionError if art dimensions are wrong after normalization
  */
 export function composeCard(card: Card, art: string): string {
-  validateArtDimensions(art, ART_WIDTH, ART_HEIGHT);
+  const normalizedArt = normalizeArt(art, ART_WIDTH, ART_HEIGHT);
+  validateArtDimensions(normalizedArt, ART_WIDTH, ART_HEIGHT);
   validateFieldLimits(card);
 
   const header = createCardHeader(card);
-  const artSection = embedArt(art, card.rarity);
+  const artSection = embedArt(normalizedArt, card.rarity);
   const footer = createCardFooter(card);
 
   const allLines = [...header, ...artSection, ...footer];
