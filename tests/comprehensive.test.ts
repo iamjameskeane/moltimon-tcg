@@ -10,15 +10,15 @@ import { handleBattleChallenge, handleBattleAccept } from "../src/handlers/battl
 import { handleTradeRequest, handleTradeAccept } from "../src/handlers/trading.ts";
 import { handleOpenPack, handleGetPacks } from "../src/handlers/packs.ts";
 import { 
-  initQuests, 
-  getAllQuests, 
-  startQuest, 
-  updateQuestProgress, 
-  completeQuest,
+  initQuests,
+  startQuest,
+  getAvailableQuests,
+  getAllQuests,
   getUserQuests,
   getUserCompletedQuests,
+  completeQuest,
+  updateQuestProgress,
   resetQuests,
-  getAvailableQuests
 } from "../src/handlers/ux/quests.ts";
 import { 
   initAchievements,
@@ -67,6 +67,8 @@ import {
   handleBanAgent,
   handleUnbanAgent,
   handleAdjustElo,
+  handleAdminResetQuests,
+  handleAdminUpdateQuestProgress,
 } from "../src/handlers/admin.ts";
 
 // Import auth utilities
@@ -471,11 +473,10 @@ describe("Comprehensive Integration Tests with Seeded Data", () => {
       const startParsed = JSON.parse(startResult.content[0].text);
       expect(startParsed.success).toBe(true);
       
-      // Update quest progress
-      const updateResult = updateQuestProgress(user1Id, questId, 1);
+      // Update quest progress (admin only)
+      const updateResult = handleAdminUpdateQuestProgress("moltbook_user1", questId, 1);
       const updateParsed = JSON.parse(updateResult.content[0].text);
       expect(updateParsed.success).toBe(true);
-      expect(updateParsed.new_progress).toBe(1);
       
       // Complete the quest
       const completeResult = completeQuest(user1Id, questId);
@@ -833,8 +834,8 @@ describe("Comprehensive Integration Tests with Seeded Data", () => {
         const parsedBefore = JSON.parse(completedBefore.content[0].text);
         expect(parsedBefore.quests.length).toBeGreaterThan(0);
         
-        // Reset daily quests
-        const resetResult = resetQuests('daily');
+        // Reset daily quests (admin only)
+        const resetResult = handleAdminResetQuests("moltbook_user1", "daily");
         const resetParsed = JSON.parse(resetResult.content[0].text);
         
         expect(resetParsed.success).toBe(true);

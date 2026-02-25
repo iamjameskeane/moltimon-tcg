@@ -214,13 +214,7 @@ describe('MCPClient', () => {
       expect(typeof client.getUserCompletedQuests).toBe('function');
     });
 
-    it('should have an updateQuestProgress method', () => {
-      expect(typeof client.updateQuestProgress).toBe('function');
-    });
 
-    it('should have a resetQuests method', () => {
-      expect(typeof client.resetQuests).toBe('function');
-    });
   });
 
   describe('Trade Operations', () => {

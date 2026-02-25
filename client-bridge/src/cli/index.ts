@@ -758,42 +758,7 @@ program
     }
   });
 
-program
-  .command('update-quest-progress')
-  .description('Update quest progress')
-  .argument('<quest-id>', 'Quest ID to update')
-  .argument('<progress>', 'Progress amount')
-  .action(async (questId: string, progress: string, options: CLIOptions) => {
-    try {
-      const config = await loadConfig(options);
-      const client = MCPClientFactory.create(config);
-      
-      const result = await client.updateQuestProgress(config.apiKey, questId, parseInt(progress));
-      
-      formatOutput(result, options.format);
-    } catch (error) {
-      printError('Failed to update quest progress:', error);
-      process.exit(1);
-    }
-  });
 
-program
-  .command('reset-quests')
-  .description('Reset quests')
-  .argument('<quest-type>', 'Quest type: daily, weekly, all')
-  .action(async (questType: string, options: CLIOptions) => {
-    try {
-      const config = await loadConfig(options);
-      const client = MCPClientFactory.create(config);
-      
-      const result = await client.resetQuests(config.apiKey, questType);
-      
-      formatOutput(result, options.format);
-    } catch (error) {
-      printError('Failed to reset quests:', error);
-      process.exit(1);
-    }
-  });
 
 program
   .command('decline-trade')

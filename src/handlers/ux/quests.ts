@@ -209,6 +209,26 @@ export function startQuest(agentId: string, questId: string) {
  * Update quest progress
  */
 export function updateQuestProgress(agentId: string, questId: string, increment: number = 1) {
+  // Validation: Prevent negative or zero increments
+  if (increment <= 0) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({ success: false, error: "Increment must be greater than 0" }, null, 2),
+      }],
+    };
+  }
+
+  // Validation: Prevent extremely large increments (cheat protection)
+  if (increment > 100) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({ success: false, error: "Increment too large (max 100)" }, null, 2),
+      }],
+    };
+  }
+
   const result = db.prepare(`
     UPDATE agent_quests 
     SET progress = progress + ?

@@ -725,28 +725,7 @@ export class MCPClient {
     return result;
   }
 
-  async updateQuestProgress(apiKey: string, questId: string, progress: number): Promise<any> {
-    const result = await this.callTool('moltimon_update_quest_progress', {
-      quest_id: questId,
-      progress,
-    }, apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
-  }
 
-  async resetQuests(apiKey: string, questType: string): Promise<any> {
-    const result = await this.callTool('moltimon_reset_quests', {
-      quest_type: questType,
-    }, apiKey);
-    const text = result.content?.[0]?.text;
-    if (text) {
-      return JSON.parse(text);
-    }
-    return result;
-  }
 
   async tradeDecline(apiKey: string, tradeId: string): Promise<any> {
     const result = await this.callTool('moltimon_trade_decline', {
@@ -762,6 +741,31 @@ export class MCPClient {
   async battleDecline(apiKey: string, battleId: string): Promise<any> {
     const result = await this.callTool('moltimon_battle_decline', {
       battle_id: battleId,
+    }, apiKey);
+    const text = result.content?.[0]?.text;
+    if (text) {
+      return JSON.parse(text);
+    }
+    return result;
+  }
+
+  async adminUpdateQuestProgress(apiKey: string, agentName: string, questId: string, increment: number = 1): Promise<any> {
+    const result = await this.callTool('moltimon_admin_update_quest_progress', {
+      agent_name: agentName,
+      quest_id: questId,
+      increment,
+    }, apiKey);
+    const text = result.content?.[0]?.text;
+    if (text) {
+      return JSON.parse(text);
+    }
+    return result;
+  }
+
+  async adminResetQuests(apiKey: string, agentName: string, questType: string): Promise<any> {
+    const result = await this.callTool('moltimon_admin_reset_quests', {
+      agent_name: agentName,
+      quest_type: questType,
     }, apiKey);
     const text = result.content?.[0]?.text;
     if (text) {

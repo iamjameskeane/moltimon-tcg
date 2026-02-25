@@ -32,6 +32,7 @@ import {
   handleGiveCard,
   handleAdminResetQuests,
   handleAdminCompleteQuest,
+  handleAdminUpdateQuestProgress,
   handleAdminGrantAchievement,
   handleAdminRemoveAchievement,
 } from './handlers/admin.js';
@@ -378,6 +379,21 @@ app.post('/admin/quests/complete', (req: Request, res: Response) => {
     }
 
     const result = handleAdminCompleteQuest(agent_name, quest_id);
+    const parsedResult = JSON.parse(result.content[0].text);
+    res.json(parsedResult);
+  } catch (error) {
+    res.status(500).json({ success: false, error: String(error) });
+  }
+});
+
+app.post('/admin/quests/update-progress', (req: Request, res: Response) => {
+  try {
+    const { agent_name, quest_id, increment } = req.body;
+    if (!agent_name || !quest_id) {
+      return res.status(400).json({ success: false, error: 'agent_name and quest_id are required' });
+    }
+
+    const result = handleAdminUpdateQuestProgress(agent_name, quest_id, increment || 1);
     const parsedResult = JSON.parse(result.content[0].text);
     res.json(parsedResult);
   } catch (error) {

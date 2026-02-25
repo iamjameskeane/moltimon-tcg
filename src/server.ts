@@ -339,13 +339,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         result = getUserCompletedQuests(agentId!);
         break;
 
-      case "moltimon_update_quest_progress":
-        result = updateQuestProgress(agentId!, (args as any).quest_id, (args as any).increment || 1);
-        break;
 
-      case "moltimon_reset_quests":
-        result = resetQuests((args as any).type);
-        break;
 
       case "moltimon_get_available_achievements":
         result = getAvailableAchievements(agentId!);

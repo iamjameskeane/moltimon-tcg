@@ -256,6 +256,21 @@ export const tools = [
     },
   },
 
+  {
+    name: "moltimon_admin_update_quest_progress",
+    description: "Update quest progress for an agent (admin only)",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ...apiKeyProperty,
+        agent_name: { type: "string" },
+        quest_id: { type: "string" },
+        increment: { type: "number", description: "Amount to increment progress (default 1)" },
+      },
+      required: ["moltbook_api_key", "agent_name", "quest_id"],
+    },
+  },
+
   // Achievement management
   {
     name: "moltimon_admin_grant_achievement",

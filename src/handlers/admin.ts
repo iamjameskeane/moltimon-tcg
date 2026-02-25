@@ -683,8 +683,83 @@ export function handleAdminCompleteQuest(agentName: string, questId: string) {
       type: "text",
       text: JSON.stringify({
         success: true,
-        message: `Completed quest for ${agentName}`,
-        quest: quest?.name,
+        message: `Quest completed for ${agentName}`,
+        quest_name: quest?.name || "Unknown quest",
+      }, null, 2),
+    }],
+  };
+}
+
+/**
+ * Update quest progress for an agent (admin only)
+ */
+export function handleAdminUpdateQuestProgress(agentName: string, questId: string, increment: number = 1) {
+  // Validation: Prevent negative or zero increments
+  if (increment <= 0) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({ success: false, error: "Increment must be greater than 0" }, null, 2),
+      }],
+    };
+  }
+
+  // Validation: Prevent extremely large increments (cheat protection)
+  if (increment > 1000) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({ success: false, error: "Increment too large (max 1000)" }, null, 2),
+      }],
+    };
+  }
+
+  const agent = getOrCreateAgent(agentName, agentName);
+  
+  // Check if the agent has started this quest
+  const existing = db.prepare(`
+    SELECT * FROM agent_quests WHERE agent_id = ? AND quest_id = ?
+  `).get(agent.id, questId);
+  
+  if (!existing) {
+    // Create new agent_quests entry
+    const agentQuestId = uuidv4();
+    db.prepare(`
+      INSERT INTO agent_quests (id, agent_id, quest_id, progress, is_completed)
+      VALUES (?, ?, ?, ?, FALSE)
+    `).run(agentQuestId, agent.id, questId, increment);
+  } else {
+    // Update existing quest progress
+    db.prepare(`
+      UPDATE agent_quests 
+      SET progress = progress + ? 
+      WHERE agent_id = ? AND quest_id = ? AND is_completed = FALSE
+    `).run(increment, agent.id, questId);
+  }
+
+  // Get quest name for notification
+  const quest = db.prepare("SELECT name, requirement FROM quests WHERE id = ?").get(questId) as { name: string; requirement: string } | undefined;
+  
+  // Send notification
+  if (quest) {
+    const req = JSON.parse(quest.requirement);
+    createNotification(
+      agent.id,
+      'quest',
+      'Quest Progress (Admin)',
+      `Progress updated: ${quest.name} +${increment}`,
+      JSON.stringify({ quest: quest.name, increment })
+    );
+  }
+
+  return {
+    content: [{
+      type: "text",
+      text: JSON.stringify({
+        success: true,
+        message: `Quest progress updated for ${agentName}`,
+        quest_name: quest?.name || "Unknown quest",
+        increment,
       }, null, 2),
     }],
   };
